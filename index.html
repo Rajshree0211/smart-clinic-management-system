@@ -1,10 +1,121 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>Smart Clinic</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Search Doctor — Smart Clinic</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f5f7fb;
+        margin: 0;
+        padding: 40px;
+      }
+      h1 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .search-box {
+        max-width: 600px;
+        margin: 0 auto 20px;
+        display: flex;
+        gap: 10px;
+      }
+      input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+      }
+      button {
+        padding: 10px 16px;
+        background: #0b5fff;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+      .results {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      .card {
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        padding: 16px;
+        margin-bottom: 12px;
+      }
+      .name {
+        font-weight: 600;
+      }
+      .spec {
+        color: #555;
+      }
+    </style>
   </head>
   <body>
-    <h1>Welcome to Smart Clinic Management System</h1>
-    <p>This is the frontend placeholder.</p>
+    <h1>Find Your Doctor</h1>
+    <div class="search-box">
+      <input
+        id="searchInput"
+        type="text"
+        placeholder="Search by name or specialty..."
+      />
+      <button id="searchBtn">Search</button>
+    </div>
+    <div id="results" class="results"></div>
+
+    <script>
+      const input = document.getElementById("searchInput");
+      const results = document.getElementById("results");
+
+      async function searchDoctors() {
+        const query = input.value.trim();
+        if (!query) {
+          results.innerHTML =
+            "<p style='text-align:center;'>Type a name or specialty.</p>";
+          return;
+        }
+
+        // Replace URL with your backend endpoint: /api/doctors?search=<query>
+        const res = await fetch(
+          `/api/doctors?search=${encodeURIComponent(query)}`
+        );
+        if (!res.ok) {
+          results.innerHTML =
+            "<p style='color:red;text-align:center;'>Error fetching doctors.</p>";
+          return;
+        }
+
+        const data = await res.json();
+        if (!data.length) {
+          results.innerHTML =
+            "<p style='text-align:center;'>No doctors found.</p>";
+          return;
+        }
+
+        results.innerHTML = data
+          .map(
+            (d) => `
+        <div class="card">
+          <div class="name">${d.name}</div>
+          <div class="spec">${d.specialty}</div>
+          <div>Available: ${d.availableTimes.join(", ")}</div>
+          <button onclick="book(${d.doctorId})">Book Appointment</button>
+        </div>
+      `
+          )
+          .join("");
+      }
+
+      function book(id) {
+        alert("Booking feature coming soon! Doctor ID: " + id);
+      }
+
+      document
+        .getElementById("searchBtn")
+        .addEventListener("click", searchDoctors);
+    </script>
   </body>
 </html>

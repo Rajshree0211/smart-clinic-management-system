@@ -1,51 +1,27 @@
 package com.clinic.model;
 
 import jakarta.persistence.*;
-import java.util.List;
+import jakarta.validation.constraints.Future;
+import java.time.LocalDateTime;
 
 @Entity
-public class Doctor {
-
+public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long doctorId;
+    private Long appointmentId;
 
-    private String name;
-    private String specialty;
+    @ManyToOne
+    @JoinColumn(name = "doctor_id")
+    private Doctor doctor;
 
-    @ElementCollection
-    private List<String> availableTimes;
+    @ManyToOne
+    @JoinColumn(name = "patient_id")
+    private Patient patient;
 
-    // Getters and Setters
-    public Long getDoctorId() {
-        return doctorId;
-    }
+    @Future
+    private LocalDateTime appointmentTime;
 
-    public void setDoctorId(Long doctorId) {
-        this.doctorId = doctorId;
-    }
+    private String status;
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getSpecialty() {
-        return specialty;
-    }
-
-    public void setSpecialty(String specialty) {
-        this.specialty = specialty;
-    }
-
-    public List<String> getAvailableTimes() {
-        return availableTimes;
-    }
-
-    public void setAvailableTimes(List<String> availableTimes) {
-        this.availableTimes = availableTimes;
-    }
+    // Getters and setters
 }
